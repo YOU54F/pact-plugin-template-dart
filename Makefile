@@ -1,5 +1,5 @@
 PROJECT=dart-template
-APP_NAME=pact-plugin.dart
+APP_NAME=plugin.dart
 
 bin:
 	dart compile exe $(APP_NAME) -o build/$(PROJECT)
