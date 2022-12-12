@@ -19,3 +19,5 @@ run_local:
 
 run_build:
 	./build/$(PROJECT)
+
+.PHONY: bin
