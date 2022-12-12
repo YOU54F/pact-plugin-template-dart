@@ -35,7 +35,7 @@ jobs:
         shell: bash
       - run: make bin
       - run: |
-          export PACT_PLUGIN_DIR=$HOME
+          export PACT_PLUGIN_DIR=$GITHUB_WORKSPACE
           cd test/pact-js/plugins
           npm i
           npm run test:consumer
