@@ -118,13 +118,11 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           $server = "${{ matrix.bin-name }}"
-          iex ".\$server --help"
-          iex ".\$server -s"
+          iex ".\$server" & _$PID && sleep 10 && kill _$PID
 
       - name: Testing on linux/macos
         if: "!startsWith(matrix.os, 'windows')"
         run: |
           server=${{ matrix.bin-name }}
           chmod +x $server
-          ./$server --help
-          ./$server -s
+          ./$server & _$PID && sleep 10 && kill _$PID
