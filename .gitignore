@@ -4,6 +4,8 @@
 
 # Conventional directory for build output.
 build/
+dist/
+dart-template
 
 # log files
 pact-plugin.log

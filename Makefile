@@ -43,6 +43,7 @@ compile_x_plat:
 
 compile: clean compile_x_plat
 	dart compile exe bin/$(APP_NAME) -o build/${PLATFORM}/${ARCH}/${PROJECT}
+	cp build/${PLATFORM}/${ARCH}/${PROJECT} ${PROJECT}
 
 compress:
 	gzip -c build/${PLATFORM}/${ARCH}/${PROJECT} > dist/release/pact-${PROJECT}-plugin-${PLATFORM}-${ARCH}.gz

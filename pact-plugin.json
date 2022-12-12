@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "executableType": "exec",
   "minimumRequiredVersion": null,
-  "entryPoint": "build/dart-template",
+  "entryPoint": "dart-template",
   "entryPoints": {},
   "args": null,
   "dependencies": null,
