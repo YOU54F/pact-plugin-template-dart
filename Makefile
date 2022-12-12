@@ -2,7 +2,7 @@ PROJECT=dart-template
 APP_NAME=plugin.dart
 
 bin:
-	dart compile exe $(APP_NAME) -o build/$(PROJECT)
+	dart compile exe bin/$(APP_NAME) -o build/$(PROJECT)
 
 proto:
 	protoc -I=. --dart_out=grpc:./proto ./proto/plugin.proto
