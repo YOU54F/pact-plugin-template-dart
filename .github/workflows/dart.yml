@@ -12,6 +12,9 @@ on:
   # schedule:
   #   - cron: 0 0 1 * 0
 
+env:
+  PORT: 50051
+
 jobs:
   compile:
     name: Dart compile
