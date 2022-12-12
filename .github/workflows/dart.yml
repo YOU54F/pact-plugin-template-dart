@@ -42,7 +42,7 @@ jobs:
       # - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
       - name: Run App
         run: |          
-          PORT=50051 dart bin/plugin.dart & _PID=$!
+          PORT=50051 dart bin/plugin.dart & _PID=$! && sleep 10
           # echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
           kill $_PID
 
@@ -90,7 +90,7 @@ jobs:
       # - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
       - name: Run App
         run: |
-          PORT=50051 dart bin/plugin.dart & _PID=$!
+          PORT=50051 dart bin/plugin.dart & _PID=$! && sleep 10
           # echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
           kill $_PID
 
