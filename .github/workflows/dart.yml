@@ -41,6 +41,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.5.0
         with: 
           repo: ktr0731/evans
+          tag: v0.10.9
       - name: Run App
         run: |          
           PORT=50051 dart bin/plugin.dart & _PID=$!
@@ -92,6 +93,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.5.0
         with: 
           repo: ktr0731/evans
+          tag: v0.10.9
       - name: Run App
         run: |
           PORT=50051 dart bin/plugin.dart & _PID=$!
