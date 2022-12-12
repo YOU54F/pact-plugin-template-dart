@@ -141,16 +141,17 @@ class PactPluginServer extends PactPluginServiceBase {
 }
 
 var LOG_DIR = 'log';
-var outputFile = File('${LOG_DIR}/pact-plugin.log');
+var outputFile = File('$LOG_DIR/pact-plugin.log');
 Future<void> main(List<String> args) async {
   Map<String, String> envVars = Platform.environment;
   Directory(LOG_DIR).create(recursive: true);
-  var port = await getUnusedPort(InternetAddress('0.0.0.0'));
+  var port = 0;
   var serverKey = Uuid().v4();
   if (envVars["PORT"] is String) {
     port = int.parse(envVars["PORT"]!);
+  } else {
+    port = await getUnusedPort((((port) => port)));
   }
-  stdout.writeln('{"port": $port, "serverKey":"$serverKey"}');
 
   final server = Server(
     [PactPluginServer()],
@@ -164,6 +165,7 @@ Future<void> main(List<String> args) async {
     // Received compressed message but "grpc-encoding" header was identity
   );
   await server.serve(port: port);
+  stdout.writeln('{"port": $port, "serverKey":"$serverKey"}');
 }
 
 void log(String message) {
@@ -174,10 +176,44 @@ void log(String message) {
       mode: FileMode.append);
 }
 
-Future<int> getUnusedPort(InternetAddress address) {
-  return ServerSocket.bind(address, 0).then((socket) {
-    var port = socket.port;
-    socket.close();
-    return port;
+/// Repeatedly finds a probably-unused port on localhost and passes it to
+/// [tryPort] until it binds successfully.
+///
+/// [tryPort] should return a non-`null` value or a Future completing to a
+/// non-`null` value once it binds successfully. This value will be returned
+/// by [getUnusedPort] in turn.
+///
+/// This is necessary for ensuring that our port binding isn't flaky for
+/// applications that don't print out the bound port.
+Future<T> getUnusedPort<T extends Object>(
+    FutureOr<T> Function(int port) tryPort) async {
+  T? value;
+  await Future.doWhile(() async {
+    value = await tryPort(await getUnsafeUnusedPort());
+    return value == null;
   });
+  return value!;
+}
+
+// Whether this computer supports binding to IPv6 addresses.
+var _maySupportIPv6 = true;
+
+Future<int> getUnsafeUnusedPort() async {
+  late int port;
+  if (_maySupportIPv6) {
+    try {
+      final socket = await ServerSocket.bind(InternetAddress.loopbackIPv6, 0,
+          v6Only: true);
+      port = socket.port;
+      await socket.close();
+    } on SocketException {
+      _maySupportIPv6 = false;
+    }
+  }
+  if (!_maySupportIPv6) {
+    final socket = await RawServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+    port = socket.port;
+    await socket.close();
+  }
+  return port;
 }

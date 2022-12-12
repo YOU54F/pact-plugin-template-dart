@@ -20,7 +20,7 @@ describe('Plugins', () => {
         console.log('Started on ports TCP: ', tcpPort, ' HTTP:', httpPort);
       });
 
-      it('validates TCP and HTTP matt messages', async () => {
+      it('validates TCP and HTTP matt messages', () => {
         const v = new Verifier({
           providerBaseUrl: `http://${HOST}:${httpPort}`,
           transports: [
