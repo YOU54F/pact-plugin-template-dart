@@ -41,7 +41,7 @@ compile_x_plat:
 	mkdir -p dist/osx/x86_64
 	mkdir -p dist/osx/aarch64
 
-compile: compile_x_plat
+compile: clean compile_x_plat
 	dart compile exe bin/$(APP_NAME) -o build/${PLATFORM}/${ARCH}/${PROJECT}
 
 compress:
