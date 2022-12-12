@@ -37,11 +37,7 @@ jobs:
       # TODO: Uncomment when you write Dart tests
       # - name: Run tests
       #   run: dart test
-      - name: Install evans gRPC cli tool
-        uses: jaxxstorm/action-install-gh-release@v1.5.0
-        with: 
-          repo: ktr0731/evans
-          tag: v0.10.9
+      - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
       - name: Run App
         run: |          
           PORT=50051 dart bin/plugin.dart & _PID=$!
@@ -89,11 +85,7 @@ jobs:
       # TODO: Uncomment when you write Dart tests
       # - name: Run tests
       #   run: dart test
-      - name: Install evans gRPC cli tool
-        uses: jaxxstorm/action-install-gh-release@v1.5.0
-        with: 
-          repo: ktr0731/evans
-          tag: v0.10.9
+      - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
       - name: Run App
         run: |
           PORT=50051 dart bin/plugin.dart & _PID=$!
