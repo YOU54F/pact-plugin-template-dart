@@ -141,14 +141,16 @@ class PactPluginServer extends PactPluginServiceBase {
 }
 
 var LOG_DIR = 'log';
-var outputFile = File('${LOG_DIR}/pact-plugin.log');
+var outputFile = File('$LOG_DIR/pact-plugin.log');
 Future<void> main(List<String> args) async {
   Map<String, String> envVars = Platform.environment;
   Directory(LOG_DIR).create(recursive: true);
-  var port = await getUnusedPort(InternetAddress('0.0.0.0'));
+  var port = 0;
   var serverKey = Uuid().v4();
   if (envVars["PORT"] is String) {
     port = int.parse(envVars["PORT"]!);
+  } else {
+    port = await getUnusedPort(InternetAddress('0.0.0.0'));
   }
   stdout.writeln('{"port": $port, "serverKey":"$serverKey"}');
 
