@@ -3,6 +3,24 @@ name: Build
 on:
   push:
   workflow_dispatch:
+    inputs:
+      release_level:
+        description: 'version of release to bump'
+        required: true
+        type: choice
+        options:
+        - patch
+        - minor
+        - major
+
+  # pull_request:
+  #   branches:
+  #     - master
+  # push:
+  #   branches:
+  #     - master
+  # schedule:
+  #   - cron: 0 0 1 * 0
 
 jobs:
   build:
@@ -18,14 +36,21 @@ jobs:
         shell: bash
     env:
       PORT: 50051
+      PROJECT: dart-template
     steps:
       - uses: actions/checkout@v3
       - if: runner.os == 'Windows'
         run: rm 'C:\Windows\System32\bash.exe'
       - uses: dart-lang/setup-dart@v1.3
       - run: dart pub get
-      - uses: actions/setup-node@v3
-      - run: make proto
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed bin
+        if: always() && steps.install.outcome == 'success'
+
+      - name: Analyze project source
+        run: dart analyze --fatal-warnings
+        if: always() && steps.install.outcome == 'success'
+
       # - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
       - name: Run App
         run: |
@@ -34,6 +59,7 @@ jobs:
           kill $_PID
         shell: bash
       - run: make bin
+      - uses: actions/setup-node@v3
       - if: runner.os != 'Windows'
         run: |
           export PACT_PLUGIN_DIR=$GITHUB_WORKSPACE/../
@@ -48,3 +74,97 @@ jobs:
           npm i
           npm run test:consumer
           npm run test:provider
+
+
+# Packaging stuff
+
+      - name: Prepare Artifacts
+        run: make prepare
+
+      - name: Upload Artifacts - windows-aarch64
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v3
+        with:
+          name: pact-${{ env.PROJECT }}-plugin-windows-aarch64.gz
+          path: dist/release/pact-${{ env.PROJECT }}-plugin-windows-aarch64.gz
+      - name: Upload Artifacts - windows-x86_64
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v3
+        with:
+          name: pact-${{ env.PROJECT }}-plugin-windows-x86_64.gz
+          path: dist/release/pact-${{ env.PROJECT }}-plugin-windows-x86_64.gz
+      - name: Upload Artifacts - linux-x86_64
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v3
+        with:
+          name: pact-${{ env.PROJECT }}-plugin-linux-x86_64.gz
+          path: dist/release/pact-${{ env.PROJECT }}-plugin-linux-x86_64.gz
+      - name: Upload Artifacts - osx-aarch64
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v3
+        with:
+          name: pact-${{ env.PROJECT }}-plugin-osx-aarch64.gz
+          path: dist/release/pact-${{ env.PROJECT }}-plugin-osx-aarch64.gz
+      - name: Upload Artifacts - osx-x86_64
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v3
+        with:
+          name: pact-${{ env.PROJECT }}-plugin-osx-x86_64.gz
+          path: dist/release/pact-${{ env.PROJECT }}-plugin-osx-x86_64.gz
+      - name: Upload Artifacts - osx-aarch64
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v3
+        with:
+          name: pact-${{ env.PROJECT }}-plugin-osx-aarch64.gz
+          path: dist/release/pact-${{ env.PROJECT }}-plugin-osx-x86_64.gz
+      - name: Upload Artifacts - Manifest
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v3
+        with:
+          name: pact-plugin.json
+          path: dist/release/pact-plugin.json
+
+# Release stuff 
+
+      - name: set version
+        run: |
+          echo "PLUGIN_VERSION=$(./script/bump.sh -p 'v-' -l)-$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
+          echo "DRAFT=true" >> $GITHUB_ENV
+      - name: set release level
+        if:  github.ref == 'refs/heads/main' && github.event.inputs.release_level
+        run: |
+          ./script/bump.sh -p v- ${{ github.event.inputs.release_level }}
+          echo "PLUGIN_VERSION=$(./script/bump.sh -p v- -l)" >> $GITHUB_ENV
+          echo "DRAFT=false" >> $GITHUB_ENV
+      - name: Release Windows
+        uses: softprops/action-gh-release@v1
+        if: runner.os == 'Windows'
+        with:
+          files: |
+            dist/release/pact-${{ env.PROJECT }}-plugin-windows-x86_64.gz
+          prerelease: ${{ env.DRAFT }}
+          tag_name: v-${{ env.PLUGIN_VERSION }}
+          name: ${{ env.PLUGIN_VERSION }}
+          target_commitish: ${{ github.sha }}
+      - name: Release Linux
+        uses: softprops/action-gh-release@v1
+        if: runner.os == 'Linux'
+        with:
+          files: |
+            dist/release/pact-plugin.json
+            dist/release/pact-${{ env.PROJECT }}-plugin-linux-x86_64.gz
+          prerelease: ${{ env.DRAFT }}
+          tag_name: v-${{ env.PLUGIN_VERSION }}
+          name: ${{ env.PLUGIN_VERSION }}
+          target_commitish: ${{ github.sha }}
+      - name: Release macOS
+        uses: softprops/action-gh-release@v1
+        if: runner.os == 'macOS'
+        with:
+          files: |
+            dist/release/pact-${{ env.PROJECT }}-plugin-osx-x86_64.gz
+            dist/release/pact-${{ env.PROJECT }}-plugin-osx-aarch64.gz
+          prerelease: ${{ env.DRAFT }}
+          tag_name: v-${{ env.PLUGIN_VERSION }}
+          name: ${{ env.PLUGIN_VERSION }}
+          target_commitish: ${{ github.sha }}
