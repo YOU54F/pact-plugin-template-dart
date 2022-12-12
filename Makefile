@@ -33,10 +33,6 @@ run_build:
 
 .PHONY: bin
 
-
-bin:
-	dart compile $(PLATFORM_BUILD_CMD) bin/$(APP_NAME) -o build/$(PROJECT)$(PLATFORM)
-
 compile_x_plat:
 	mkdir -p dist
 	mkdir -p dist/release

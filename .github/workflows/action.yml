@@ -58,7 +58,7 @@ jobs:
           # echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
           kill $_PID
         shell: bash
-      - run: make bin
+      - run: make compile
       - uses: actions/setup-node@v3
       - if: runner.os != 'Windows'
         run: |
