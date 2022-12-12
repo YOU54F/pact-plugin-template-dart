@@ -12,6 +12,9 @@ clean:
 	mkdir -p build/osx/aarch64
 
 
+update_manifest:
+	@echo ${PLUGIN_VERSION} && variable=${PLUGIN_VERSION}; jq --arg variable "$$variable" '.version = $$variable' pact-plugin.json > pact-plugin.json
+
 # bin: clean
 # 	dart compile exe bin/$(APP_NAME) -o build/$(PROJECT)
 
