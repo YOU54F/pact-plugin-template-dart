@@ -29,7 +29,7 @@ describe('Plugins - Matt Protocol', () => {
         .given('the Matt protocol exists')
         .uponReceiving('an HTTP request to /matt')
         .usingPlugin({
-          plugin: 'python-template',
+          plugin: 'dart-template',
           version: '0.0.0',
         })
         .withRequest('POST', '/matt', (builder) => {
