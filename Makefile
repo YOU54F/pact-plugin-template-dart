@@ -15,7 +15,7 @@ setup_dart:
 	dart pub global activate protoc_plugin
 
 run_local:
-	./$(APP_NAME)
+	./bin/$(APP_NAME)
 
 run_build:
 	./build/$(PROJECT)
