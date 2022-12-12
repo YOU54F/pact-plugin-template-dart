@@ -121,11 +121,18 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           $server = "${{ matrix.bin-name }}"
-          iex ".\$server"
+          $process = Start-Process iex ".\$server" -PassThru
+          # Get the process ud
+          $process.ID
+          # Wait 1 second
+          Start-Sleep 1
+          # Kill the process
+          Stop-Process -id $process.Id
+          
 
       - name: Testing on linux/macos
         if: "!startsWith(matrix.os, 'windows')"
         run: |
           server=${{ matrix.bin-name }}
           chmod +x $server
-          ./$server
+          ./$server && _PID=$! && sleep 10 && kill $_PID
