@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    timeout-minutes: 10
+    # runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      LD_LIBRARY_PATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v3
+      - if: runner.os == 'Windows'
+        run: rm 'C:\Windows\System32\bash.exe'
+      - uses: dart-lang/setup-dart@v1.3
+      - run: dart pub get
+      - uses: actions/setup-node@v3
+      - run: make proto
+      - name: Install evans gRPC cli tool
+        uses: jaxxstorm/action-install-gh-release@v1.5.0
+        with: 
+          repo: ktr0731/evans
+      - name: Run App
+        run: |
+          PORT=50051 dart bin/plugin.dart & _PID=$!
+          echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
+          kill $_PID
+      - run: make bin
+      - run: |
+          export PACT_PLUGIN_DIR=$PWD
+          cd test/pact-js/plugins
+          npm i
+          npm run test:consumer
+          npm run test:provider
