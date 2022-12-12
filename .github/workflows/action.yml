@@ -32,6 +32,7 @@ jobs:
           PORT=50051 dart bin/plugin.dart & _PID=$! && sleep 10
           # echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
           kill $_PID
+        shell: bash
       - run: make bin
       - run: |
           export PACT_PLUGIN_DIR=$PWD

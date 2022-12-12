@@ -13,41 +13,8 @@ on:
   #   - cron: 0 0 1 * 0
 
 jobs:
-  # jit:
-  #   name: DartVM (JIT)
-  #   runs-on: ubuntu-latest
-
-  #   container:
-  #     image: google/dart:dev
-
-  #   steps:
-  #     - name: Checkout Repo
-  #       uses: actions/checkout@v3.1.0
-
-  #     - id: install
-  #       name: Install dependencies
-  #       run: dart pub get
-
-  #     - name: Verify formatting
-  #       run: dart format --output=none --set-exit-if-changed .
-  #       if: always() && steps.install.outcome == 'success'
-
-  #     - name: Analyze project source
-  #       run: dart analyze --fatal-warnings
-  #       if: always() && steps.install.outcome == 'success'
-
-  #     # TODO: Uncomment when you write Dart tests
-  #     # - name: Run tests
-  #     #   run: dart test
-  #     # - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
-  #     - name: Run App
-  #       run: |          
-  #         PORT=50051 dart bin/plugin.dart & _PID=$! && sleep 10
-  #         # echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
-  #         kill $_PID
-
-  aot:
-    name: Dart2Native (AOT)
+  compile:
+    name: Dart compile
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -93,6 +60,7 @@ jobs:
           PORT=50051 dart bin/plugin.dart & _PID=$! && sleep 10
           # echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
           kill $_PID
+        shell: bash
 
       # - name: Generate Coverage
       #   run: pub run test_coverage --no-badge
@@ -111,7 +79,7 @@ jobs:
       - name: Dart2Native Build
         run: |
           dart --version
-          dart2native bin/main.dart -v -DdefaultPort=8445 -o ${{ matrix.bin-name }}
+          dart compile bin/plugin.dart -v -o ${{ matrix.bin-name }}
           echo "The binary file name is ${{ matrix.bin-name }}"
 
       - name: Uploading ${{ matrix.bin-name }}
@@ -125,7 +93,7 @@ jobs:
 
   test:
     name: Test Native Binaries
-    needs: aot
+    needs: compile
     runs-on: ${{ matrix.os }}
 
     strategy:
