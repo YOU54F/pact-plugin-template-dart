@@ -152,7 +152,6 @@ Future<void> main(List<String> args) async {
   } else {
     port = await getUnusedPort(InternetAddress('0.0.0.0'));
   }
-  stdout.writeln('{"port": $port, "serverKey":"$serverKey"}');
 
   final server = Server(
     [PactPluginServer()],
@@ -166,6 +165,7 @@ Future<void> main(List<String> args) async {
     // Received compressed message but "grpc-encoding" header was identity
   );
   await server.serve(port: port);
+  stdout.writeln('{"port": $port, "serverKey":"$serverKey"}');
 }
 
 void log(String message) {
