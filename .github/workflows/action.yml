@@ -66,14 +66,14 @@ jobs:
           cd test/pact-js/plugins
           npm i
           npm run test:consumer
-          npm run test:provider
+          # npm run test:provider
       - if: runner.os == 'Windows'
         run: |
           export PACT_PLUGIN_DIR=$GITHUB_WORKSPACE\\..\\
           cd test/pact-js/plugins
           npm i
           npm run test:consumer
-          npm run test:provider
+          # npm run test:provider
 
 
 # Packaging stuff
