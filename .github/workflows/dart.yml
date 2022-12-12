@@ -79,7 +79,7 @@ jobs:
       - name: Dart2Native Build
         run: |
           dart --version
-          dart compile bin/plugin.dart -v -o ${{ matrix.bin-name }}
+          dart compile exe bin/plugin.dart -v -o ${{ matrix.bin-name }}
           echo "The binary file name is ${{ matrix.bin-name }}"
 
       - name: Uploading ${{ matrix.bin-name }}
