@@ -12,3 +12,4 @@ pact-plugin.log
 
 # test files
 pacts
+.DS_Store
