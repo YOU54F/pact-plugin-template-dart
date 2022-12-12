@@ -26,11 +26,11 @@ jobs:
       - run: dart pub get
       - uses: actions/setup-node@v3
       - run: make proto
-      - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
+      # - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
       - name: Run App
         run: |
           PORT=50051 dart bin/plugin.dart & _PID=$!
-          echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
+          # echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
           kill $_PID
       - run: make bin
       - run: |

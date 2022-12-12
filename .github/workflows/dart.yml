@@ -1,14 +1,16 @@
 name: Dart Build
 
 on:
-  pull_request:
-    branches:
-      - master
   push:
-    branches:
-      - master
-  schedule:
-    - cron: 0 0 1 * 0
+  workflow_dispatch:
+  # pull_request:
+  #   branches:
+  #     - master
+  # push:
+  #   branches:
+  #     - master
+  # schedule:
+  #   - cron: 0 0 1 * 0
 
 jobs:
   jit:
@@ -37,11 +39,11 @@ jobs:
       # TODO: Uncomment when you write Dart tests
       # - name: Run tests
       #   run: dart test
-      - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
+      # - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
       - name: Run App
         run: |          
           PORT=50051 dart bin/plugin.dart & _PID=$!
-          echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
+          # echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
           kill $_PID
 
   aot:
@@ -85,11 +87,11 @@ jobs:
       # TODO: Uncomment when you write Dart tests
       # - name: Run tests
       #   run: dart test
-      - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
+      # - run: curl https://i.jpillora.com/ktr0731/evans@v0.10.9! | bash
       - name: Run App
         run: |
           PORT=50051 dart bin/plugin.dart & _PID=$!
-          echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
+          # echo '{ "implementation": "pact-rust","version":"1.2.3" }' | evans cli call InitPlugin --enrich
           kill $_PID
 
       # - name: Generate Coverage
