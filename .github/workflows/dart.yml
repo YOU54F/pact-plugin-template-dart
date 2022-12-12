@@ -76,7 +76,7 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-dart-
 
-      - name: Dart2Native Build
+      - name: dart compile executable
         run: |
           dart --version
           dart compile exe bin/plugin.dart -v -o ${{ matrix.bin-name }}

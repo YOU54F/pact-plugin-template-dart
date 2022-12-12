@@ -1,7 +1,11 @@
 PROJECT=dart-template
 APP_NAME=plugin.dart
 
-bin:
+clean:
+	rm -rf bin
+	mkdir -p bin
+
+bin: clean
 	dart compile exe bin/$(APP_NAME) -o build/$(PROJECT)
 
 proto:
